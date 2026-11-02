@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="km" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cambodian PPSHV Expressway - Executive Staff Rotation System v6.8</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts for Khmer & English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            glow: '#00f0ff'
+                        },
+                        cyber: {
+                            bg: '#06080e',
+                            card: '#0f172a',
+                            panel: 'rgba(15, 23, 42, 0.75)',
+                            border: '#1e293b',
+                            accent: '#3b82f6',
+                            gold: '#f59e0b',
+                            rose: '#f43f5e',
+                            emerald: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        khmer: ['Kantumruy Pro', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-blue': '0 0 20px rgba(14, 165, 233, 0.25)',
+                        'neon-amber': '0 0 20px rgba(245, 158, 11, 0.25)',
+                        'neon-emerald': '0 0 20px rgba(16, 185, 129, 0.25)',
+                        'glow': '0 0 15px rgba(59, 130, 246, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        html.dark body {
+            background-color: #06080e;
+            color: #f3f4f6;
+        }
+        html:not(.dark) body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+        }
+        html.dark .glass-panel {
+            background: rgba(15, 23, 42, 0.82);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        html:not(.dark) .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(203, 213, 225, 0.8);
+        }
+        .glass-card {
+            transition: all 0.3s ease;
+        }
+        html.dark .glass-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        html:not(.dark) .glass-card {
+            background: #ffffff;
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        html.dark .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        html:not(.dark) .glass-card:hover {
+            border-color: rgba(14, 165, 233, 0.5);
+        }
+        .active-tab {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border-color: #38bdf8;
+            color: #38bdf8;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-24 font-khmer selection:bg-brand-500 selection:text-white">
+
+    <!-- Header / Branding -->
+    <header class="glass-panel sticky top-0 z-40 px-4 py-3 shadow-xl">
+        <div class="max-w-xl mx-auto flex justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur opacity-40 group-hover:opacity-75 transition duration-300"></div>
+                    <div class="relative w-11 h-11 rounded-xl bg-slate-900 p-1 flex items-center justify-center border border-slate-700/80 overflow-hidden shadow-md">
+                        <img id="company-logo-img" src="https://raw.githubusercontent.com/T-Expressway/Logo/main/ppshv.png" 
+                             alt="PPSHV Logo" 
+                             class="w-full h-full object-contain rounded-lg"
+                             onerror="this.onerror=null; this.src='https://placehold.co/120x120/0f172a/ffffff?text=PPSHV';">
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="font-extrabold text-[11px] tracking-wider text-slate-800 dark:text-slate-100 uppercase font-sans">CAMBODIAN PPSHV EXPRESSWAY</h1>
+                        <span class="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 rounded-md shadow-neon-blue">v6.8</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium" id="header-date-display">កំពុងផ្ទុក...</p>
+                </div>
+            </div>
+
+            <!-- Controls: Mode Toggle & Auth Status -->
+            <div class="flex items-center gap-2">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle-btn" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:scale-105 transition border border-slate-300 dark:border-slate-700 shadow-sm" title="ប្តូរ Light/Dark Mode">
+                    <i id="theme-icon" data-lucide="sun" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i>
+                </button>
+
+                <!-- Auth Status -->
+                <div class="flex flex-col items-end gap-1">
+                    <div id="admin-status-badge" class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/90 px-2.5 py-1 rounded-full text-[10px] font-bold border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-inner">
+                        <span id="admin-status-dot" class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-pulse"></span>
+                        <span id="admin-status-text">Staff Access</span>
+                    </div>
+                    <button id="toggle-demo-admin-btn" onclick="toggleDemoAdminMode()" class="text-[9px] text-cyan-600 dark:text-cyan-400/80 hover:underline font-medium">
+                        (Test Admin Auth)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-xl mx-auto p-4 space-y-4">
+
+        <!-- Navigation Tabs -->
+        <nav class="flex bg-slate-200/80 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800/90 shadow-xl backdrop-blur-md">
+            <button id="tab-daily-btn" onclick="switchTab('daily')" class="flex-1 py-2.5 rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1.5 active-tab">
+                <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                <span>១. តុប្រចាំថ្ងៃ</span>
+            </button>
+            <button id="tab-weekly-btn" onclick="switchTab('weekly')" class="flex-1 py-2.5 rounded-xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition flex items-center justify-center gap-1.5">
+                <i data-lucide="calendar-range" class="w-4 h-4"></i>
+                <span>២. តារាងសប្តាហ៍</span>
+            </button>
+            <button id="tab-admin-btn" onclick="switchTab('admin')" class="flex-1 py-2.5 rounded-xl text-[11px] font-bold text-amber-600 dark:text-amber-400/70 hover:text-amber-500 dark:hover:text-amber-300 transition flex items-center justify-center gap-1.5 border border-amber-500/20 bg-amber-500/5">
+                <i data-lucide="shield-check" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i>
+                <span>៣. ផ្ទាំង Admin</span>
+            </button>
+        </nav>
+
+        <!-- TAB 1: DAILY VIEW -->
+        <div id="view-daily" class="space-y-4">
+            
+            <!-- Date Navigation Bar -->
+            <section class="glass-card rounded-2xl p-3 shadow-xl flex items-center justify-between gap-2 border border-slate-300 dark:border-slate-800">
+                <button onclick="changeDate(-1)" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition border border-slate-300 dark:border-slate-700/60 shadow-sm">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                
+                <div class="text-center flex-1">
+                    <div class="flex items-center justify-center gap-1">
+                        <input type="date" id="date-picker" onchange="onDateSelected(this.value)" class="bg-transparent font-bold text-center text-sm focus:outline-none cursor-pointer text-cyan-600 dark:text-cyan-400 tracking-wide font-sans">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-cyan-500 pointer-events-none"></i>
+                    </div>
+                    <div id="khmer-date-full" class="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">...</div>
+                </div>
+
+                <button onclick="changeDate(1)" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition border border-slate-300 dark:border-slate-700/60 shadow-sm">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+                <button onclick="resetToToday()" class="px-2.5 py-2 rounded-xl bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 text-[11px] font-bold hover:bg-cyan-500/25 active:scale-95 transition border border-cyan-500/30 flex items-center gap-1 shadow-neon-blue">
+                    <span>ថ្ងៃនេះ</span>
+                </button>
+            </section>
+
+            <!-- Cycle Shift Status Banner -->
+            <div id="shift-status-banner" class="glass-card p-3 rounded-2xl border text-center font-bold text-xs flex items-center justify-center gap-2">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Metrics Bar -->
+            <section class="grid grid-cols-4 gap-2">
+                <div class="glass-card p-2.5 rounded-xl text-center space-y-0.5 border border-slate-300 dark:border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">បុគ្គលិក</span>
+                    <span class="text-base font-black text-slate-800 dark:text-white font-sans" id="metric-total">7</span>
+                </div>
+                <div class="glass-card p-2.5 rounded-xl text-center space-y-0.5 border border-amber-500/30 bg-amber-500/5 shadow-neon-amber">
+                    <span class="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 block">🌅 ព្រឹក</span>
+                    <span class="text-base font-black text-amber-600 dark:text-amber-300 font-sans" id="metric-morning">0</span>
+                </div>
+                <div class="glass-card p-2.5 rounded-xl text-center space-y-0.5 border border-blue-500/30 bg-blue-500/5 shadow-neon-blue">
+                    <span class="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 block">🌙 យប់</span>
+                    <span class="text-base font-black text-blue-600 dark:text-blue-300 font-sans" id="metric-night">0</span>
+                </div>
+                <div class="glass-card p-2.5 rounded-xl text-center space-y-0.5 border border-rose-500/30 bg-rose-500/5">
+                    <span class="text-[10px] font-extrabold text-rose-600 dark:text-rose-400 block">🔴 សម្រាក/ច្បាប់</span>
+                    <span class="text-base font-black text-rose-600 dark:text-rose-300 font-sans" id="metric-off">0</span>
+                </div>
+            </section>
+
+            <!-- Search Bar -->
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="staff-search-input" onkeyup="filterDailyCards()" placeholder="ស្វែងរកឈ្មោះ ឬតុធ្វើការ..." class="w-full bg-white dark:bg-slate-900/90 border border-slate-300 dark:border-slate-800 rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition shadow-sm">
+            </div>
+
+            <!-- Dynamic Staff Cards Container -->
+            <div class="space-y-3" id="staff-assignments-container"></div>
+
+            <!-- Export Buttons -->
+            <div class="grid grid-cols-2 gap-2.5 pt-2">
+                <button onclick="shareToTelegram()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-[0.98] text-white py-3 px-3 rounded-xl font-bold text-xs shadow-neon-blue flex items-center justify-center gap-2 transition border border-cyan-400/30">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>ផ្ញើ Telegram Group</span>
+                </button>
+                <button onclick="copySummaryText()" class="w-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 active:scale-[0.98] text-slate-800 dark:text-slate-200 py-3 px-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 transition border border-slate-300 dark:border-slate-700">
+                    <i data-lucide="copy" class="w-4 h-4 text-cyan-500"></i>
+                    <span>ចម្លងរបាយការណ៍</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB 2: WEEKLY MATRIX VIEW -->
+        <div id="view-weekly" class="hidden space-y-4">
+            <div class="glass-card rounded-2xl p-4 space-y-3 border border-slate-300 dark:border-slate-800">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="grid" class="w-4 h-4 text-cyan-500"></i>
+                            តារាងរ៉ូតាស៊ីយ៉ុង ៧ ថ្ងៃ (Weekly Synchronized Matrix)
+                        </h3>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">មើលការបង្វិលវេនជាមុនសម្រាប់ក្រុមទាំងមូល (2 ព្រឹក, 2 យប់, 2 សម្រាក)</p>
+                    </div>
+                </div>
+
+                <!-- Matrix Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-300 dark:border-slate-800">
+                    <table class="w-full text-[11px] text-left border-collapse" id="weekly-matrix-table">
+                        <!-- Dynamic content -->
+                    </table>
+                </div>
+
+                <div class="flex items-center justify-around pt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800/80">
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500/40 border border-amber-500"></span> 🌅 ព្រឹក</div>
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500/40 border border-blue-500"></span> 🌙 យប់</div>
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500/40 border border-rose-500"></span> 🔴 សម្រាក</div>
+                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-500/60 border border-purple-300"></span> 📝 ច្បាប់/យឺត</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ADMIN PORTAL -->
+        <div id="view-admin" class="hidden space-y-4">
+            <div class="glass-card rounded-2xl p-4 space-y-5 border border-amber-500/30 bg-white/90 dark:bg-slate-900/90 shadow-neon-amber">
+                
+                <!-- Admin Header -->
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-500 dark:text-amber-400 flex items-center justify-center border border-amber-500/30 shadow-neon-amber">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100">Executive Admin Portal</h3>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">គ្រប់គ្រងសិទ្ធិដោយ៖ LUN CHANDARA (ID: 459884535)</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">Authenticated</span>
+                </div>
+
+                <!-- 1. Sick Leave & General Leave Management -->
+                <div class="space-y-2.5 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <label class="text-xs font-bold text-amber-600 dark:text-amber-300 flex items-center gap-1.5">
+                        <i data-lucide="calendar-off" class="w-4 h-4 text-amber-500"></i>
+                        ១. កត់ត្រាការសុំច្បាប់ ឬឈឺ (Leave Management)
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="leave-staff-select" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-amber-500"></select>
+                        <select id="leave-type-select" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-amber-500">
+                            <option value="Sick">🩺 ឈឺ (Sick Leave)</option>
+                            <option value="Personal">📝 សុំច្បាប់កិច្ចការផ្ទាល់ខ្លួន</option>
+                            <option value="Annual">🌴 សុំច្បាប់ប្រចាំឆ្នាំ</option>
+                        </select>
+                    </div>
+                    <button onclick="applyLeaveForSelected()" class="w-full py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-700 dark:text-amber-300 border border-amber-500/40 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 active:scale-95">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                        រក្សាទុក & ផ្ញើចូល Telegram Group
+                    </button>
+                </div>
+
+                <!-- 2. Late Arrival Management -->
+                <div class="space-y-2.5 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <label class="text-xs font-bold text-purple-600 dark:text-purple-300 flex items-center gap-1.5">
+                        <i data-lucide="clock" class="w-4 h-4 text-purple-500"></i>
+                        ២. កត់ត្រាការសុំមកយឺត (Late Arrival)
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="late-staff-select" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-purple-500"></select>
+                        <input type="text" id="late-reason-input" placeholder="មូលហេតុ ឬចំនួននាទីយឺត..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-purple-500">
+                    </div>
+                    <button onclick="applyLateForSelected()" class="w-full py-2.5 bg-purple-600/20 hover:bg-purple-600/30 text-purple-700 dark:text-purple-300 border border-purple-500/40 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 active:scale-95">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                        កត់ត្រា & ផ្ញើចូល Telegram Group
+                    </button>
+                </div>
+
+                <!-- 3. Manual Desk Swap Tool -->
+                <div class="space-y-2.5 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <label class="text-xs font-bold text-cyan-600 dark:text-cyan-300 flex items-center gap-1.5">
+                        <i data-lucide="arrow-left-right" class="w-4 h-4 text-cyan-500"></i>
+                        ៣. ដោះដូរតុភ្លាមៗប្រចាំថ្ងៃ (Manual Desk Swap)
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="swap-staff-1" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-cyan-500"></select>
+                        <select id="swap-staff-2" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-cyan-500"></select>
+                    </div>
+                    <button onclick="executeSwap()" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow-neon-blue active:scale-95">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        ផ្លាស់ប្តូរតុរវាងបុគ្គលិកទាំង ២ នាក់
+                    </button>
+                </div>
+
+                <!-- 4. Dynamic Logo URL Updater -->
+                <div class="space-y-2 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <label class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                        <i data-lucide="image" class="w-4 h-4 text-blue-500"></i>
+                        ៤. អាប់ដេត Link Logo ក្រុមហ៊ុន (Company Logo URL)
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="admin-logo-url-input" placeholder="https://..." class="flex-1 text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500">
+                        <button onclick="updateCompanyLogo()" class="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-300 dark:border-slate-700 transition active:scale-95">
+                            រក្សាទុក
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reset App State -->
+                <button onclick="resetSettings()" class="w-full py-2.5 bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold rounded-xl hover:bg-rose-500/25 transition flex items-center justify-center gap-1.5 active:scale-95">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    ស្ដារការកំណត់ដើមទាំងអស់ (Reset App State)
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Overlay -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 text-slate-100 text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl border border-cyan-500/40 opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2.5 backdrop-blur-md">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400"></i>
+        <span id="toast-text">ប្រតិបត្តិការជោគជ័យ</span>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        const ADMIN_TELEGRAM_ID = "459884535"; // LUN CHANDARA ID
+        const ADMIN_SECRET_PASSWORD = "168168"; // 🔑 លេខសម្ងាត់ Admin
+
+        const TELEGRAM_BOT_TOKEN = "9136693389:AAH56iVMSPBAxmKcW0BOdmfZx7C7-rKD6xY"; 
+        const TELEGRAM_CHAT_ID = "-1003942611436";   
+
+        let currentTheme = localStorage.getItem('office_v6_theme') || 'dark';
+        let isDemoAdminOverride = false;
+        let selectedDate = new Date();
+        let currentTelegramUserId = null;
+
+        const STAFF_MEMBERS = [
+            { id: 1, name: "LY SOKUNPANHA", role: "ប្រធានក្រុម", fixedDesk: "សវនកម្ម" },
+            { id: 2, name: "LY PANHANALL", role: "អនុប្រធាន" },
+            { id: 3, name: "LUN CHANDARA", role: "បុគ្គលិកកាមេរ៉ា (Admin)" },
+            { id: 4, name: "MUY LONGDY", role: "បុគ្គលិកកាមេរ៉ា" },
+            { id: 5, name: "POV CHAIYA", role: "បុគ្គលិកកាមេរ៉ា" },
+            { id: 6, name: "DAIM KUNTHEA", role: "បុគ្គលិកកាមេរ៉ា" },
+            { id: 7, name: "SEA VICHKA", role: "បុគ្គលិកកាមេរ៉ា" }
+        ];
+
+        const OTHER_DESKS = ["Excel", "ទូស្ថានីយ៍", "ទូA", "ទូB", "ទូC", "កែផ្លាកលេខ"];
+        const SYNCHRONIZED_SHIFT_CYCLE = ["ព្រឹក", "ព្រឹក", "យប់", "យប់", "សម្រាក", "សម្រាក"];
+
+        let customSwaps = JSON.parse(localStorage.getItem('office_v6_swaps')) || {};
+        let staffLeaves = JSON.parse(localStorage.getItem('office_v6_leaves')) || {};
+        let staffLates = JSON.parse(localStorage.getItem('office_v6_lates')) || {};
+        let customLogoUrl = localStorage.getItem('office_v6_logo') || "https://raw.githubusercontent.com/T-Expressway/Logo/main/ppshv.png";
+
+        let tg = window.Telegram?.WebApp;
+        if (tg) {
+            try {
+                tg.ready();
+                tg.expand();
+                if (tg.initDataUnsafe?.user?.id) {
+                    currentTelegramUserId = String(tg.initDataUnsafe.user.id);
+                }
+            } catch (e) {
+                console.log("Telegram SDK load:", e);
+            }
+        }
+
+        // ☀️/🌙 Theme Toggle System
+        function applyTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('office_v6_theme', theme);
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (theme === 'dark') {
+                htmlEl.classList.add('dark');
+                if (themeIcon) {
+                    themeIcon.setAttribute('data-lucide', 'sun');
+                    themeIcon.className = "w-4 h-4 text-amber-400";
+                }
+            } else {
+                htmlEl.classList.remove('dark');
+                if (themeIcon) {
+                    themeIcon.setAttribute('data-lucide', 'moon');
+                    themeIcon.className = "w-4 h-4 text-blue-600";
+                }
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleTheme() {
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            showToast(newTheme === 'dark' ? "បានប្តូរទៅ Dark Mode" : "បានប្តូរទៅ Light Mode");
+        }
+
+        function checkIsAdmin() {
+            return (currentTelegramUserId === ADMIN_TELEGRAM_ID) || isDemoAdminOverride;
+        }
+
+        function getKhmerFormattedDate(dateObj) {
+            const daysKhmer = ["អាទិត្យ", "ចន្ទ", "អង្គារ", "ពុធ", "ព្រហស្បតិ៍", "សុក្រ", "សៅរ៍"];
+            const monthsKhmer = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មីថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+            return `ថ្ងៃ${daysKhmer[dateObj.getDay()]} ទី${dateObj.getDate()} ខែ${monthsKhmer[dateObj.getMonth()]} ឆ្នាំ${dateObj.getFullYear()}`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            applyTheme(currentTheme);
+            document.getElementById('date-picker').valueAsDate = selectedDate;
+            document.getElementById('admin-logo-url-input').value = customLogoUrl;
+            applyLogoUrl(customLogoUrl);
+
+            updateAdminAuthenticationUI();
+            renderUI();
+        });
+
+        function switchTab(tabName) {
+            if (tabName === 'admin') {
+                if (!checkIsAdmin()) {
+                    let enteredPassword = prompt("🔐 សូមបញ្ចូលលេខសម្ងាត់ Admin (...) ដើម្បីបន្ត:");
+                    if (enteredPassword === ADMIN_SECRET_PASSWORD) {
+                        isDemoAdminOverride = true;
+                        updateAdminAuthenticationUI();
+                        showToast("ចូលកាន់ផ្ទាំង Admin បានជោគជ័យ!");
+                    } else {
+                        if (enteredPassword !== null) {
+                            showToast("❌ លេខសម្ងាត់មិនត្រឹមត្រូវ!");
+                        }
+                        return;
+                    }
+                }
+            }
+
+            document.getElementById('view-daily').classList.add('hidden');
+            document.getElementById('view-weekly').classList.add('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+
+            document.getElementById('tab-daily-btn').classList.remove('active-tab');
+            document.getElementById('tab-weekly-btn').classList.remove('active-tab');
+            document.getElementById('tab-admin-btn').classList.remove('active-tab');
+
+            if (tabName === 'daily') {
+                document.getElementById('view-daily').classList.remove('hidden');
+                document.getElementById('tab-daily-btn').classList.add('active-tab');
+            } else if (tabName === 'weekly') {
+                document.getElementById('view-weekly').classList.remove('hidden');
+                document.getElementById('tab-weekly-btn').classList.add('active-tab');
+                renderWeeklyMatrix();
+            } else if (tabName === 'admin') {
+                document.getElementById('view-admin').classList.remove('hidden');
+                document.getElementById('tab-admin-btn').classList.add('active-tab');
+                populateAdminOptions();
+            }
+        }
+
+        function toggleDemoAdminMode() {
+            if (!checkIsAdmin()) {
+                let enteredPassword = prompt("🔐 សូមបញ្ចូលលេខសម្ងាត់ Admin (...):");
+                if (enteredPassword === ADMIN_SECRET_PASSWORD) {
+                    isDemoAdminOverride = true;
+                    updateAdminAuthenticationUI();
+                    showToast("បានបើកសិទ្ធិ Admin ជោគជ័យ!");
+                } else if (enteredPassword !== null) {
+                    showToast("❌ លេខសម្ងាត់មិនត្រឹមត្រូវ!");
+                }
+            } else {
+                isDemoAdminOverride = false;
+                updateAdminAuthenticationUI();
+                showToast("បានបិទសិទ្ធិ Admin!");
+            }
+        }
+
+        function updateAdminAuthenticationUI() {
+            const isAdmin = checkIsAdmin();
+            const badgeDot = document.getElementById('admin-status-dot');
+            const badgeText = document.getElementById('admin-status-text');
+
+            if (isAdmin) {
+                badgeDot.className = "w-2 h-2 rounded-full bg-emerald-400 shadow-neon-emerald animate-pulse";
+                badgeText.textContent = "Admin Authenticated";
+                badgeText.className = "text-emerald-600 dark:text-emerald-400 font-bold";
+            } else {
+                badgeDot.className = "w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500";
+                badgeText.textContent = "Staff Access";
+                badgeText.className = "text-slate-500 dark:text-slate-400 font-medium";
+            }
+        }
+
+        function calculateStaffAssignments(targetDate) {
+            const diffDays = Math.floor((targetDate - new Date(2026, 0, 1)) / (1000 * 60 * 60 * 24));
+            const dateStr = targetDate.toISOString().split('T')[0];
+            
+            const activeLeaves = staffLeaves[dateStr] || {};
+            const activeLates = staffLates[dateStr] || {};
+
+            const cycleIdx = Math.abs(diffDays % 6);
+            const globalGroupShift = SYNCHRONIZED_SHIFT_CYCLE[cycleIdx];
+
+            let assignments = [];
+            let morningCount = 0;
+            let nightCount = 0;
+            let offCount = 0;
+
+            let otherDeskCounter = 0;
+
+            STAFF_MEMBERS.forEach((staff) => {
+                const leaveType = activeLeaves[staff.id];
+                const lateReason = activeLates[staff.id];
+                let staffShift = globalGroupShift;
+
+                if (leaveType) {
+                    offCount++;
+                } else if (staffShift === "ព្រឹក") {
+                    morningCount++;
+                } else if (staffShift === "យប់") {
+                    nightCount++;
+                } else {
+                    offCount++;
+                }
+
+                let deskName = "";
+                if (leaveType) {
+                    if (leaveType === "Sick") deskName = "🩺 សម្រាកព្យាបាល (Sick Leave)";
+                    else if (leaveType === "Personal") deskName = "📝 ច្បាប់កិច្ចការផ្ទាល់ខ្លួន";
+                    else deskName = "🌴 ច្បាប់ប្រចាំឆ្នាំ";
+                } else if (staffShift === "សម្រាក") {
+                    deskName = "🔴 សម្រាក (No Desk Assigned)";
+                } else if (staff.fixedDesk) {
+                    deskName = staff.fixedDesk;
+                } else {
+                    const rotatedIdx = Math.abs(diffDays + otherDeskCounter) % OTHER_DESKS.length;
+                    deskName = OTHER_DESKS[rotatedIdx];
+                    otherDeskCounter++;
+                }
+
+                assignments.push({
+                    staff: staff,
+                    shift: staffShift,
+                    desk: deskName,
+                    leaveType: leaveType,
+                    lateReason: lateReason
+                });
+            });
+
+            if (customSwaps[dateStr]) {
+                customSwaps[dateStr].forEach(swap => {
+                    const idx1 = assignments.findIndex(a => a.staff.id === swap.staff1Id);
+                    const idx2 = assignments.findIndex(a => a.staff.id === swap.staff2Id);
+                    if (idx1 !== -1 && idx2 !== -1) {
+                        const tempDesk = assignments[idx1].desk;
+                        assignments[idx1].desk = assignments[idx2].desk;
+                        assignments[idx2].desk = tempDesk;
+                    }
+                });
+            }
+
+            return { assignments, globalGroupShift, morningCount, nightCount, offCount };
+        }
+
+        function renderUI() {
+            document.getElementById('header-date-display').textContent = getKhmerFormattedDate(selectedDate);
+            document.getElementById('khmer-date-full').textContent = getKhmerFormattedDate(selectedDate);
+
+            const { assignments, globalGroupShift, morningCount, nightCount, offCount } = calculateStaffAssignments(selectedDate);
+
+            const banner = document.getElementById('shift-status-banner');
+            if (globalGroupShift === "ព្រឹក") {
+                banner.className = "glass-card p-3 rounded-2xl border border-amber-500/40 text-center font-bold text-xs flex items-center justify-center gap-2 bg-amber-500/10 text-amber-700 dark:text-amber-300 shadow-neon-amber";
+                banner.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-amber-500"></i> <span>ថ្ងៃនេះ បុគ្គលិកទាំងអស់ ៧ នាក់ ធ្វើការ «វេនព្រឹក» រួមគ្នា</span>`;
+            } else if (globalGroupShift === "យប់") {
+                banner.className = "glass-card p-3 rounded-2xl border border-blue-500/40 text-center font-bold text-xs flex items-center justify-center gap-2 bg-blue-500/10 text-blue-700 dark:text-blue-300 shadow-neon-blue";
+                banner.innerHTML = `<i data-lucide="moon" class="w-4 h-4 text-blue-500"></i> <span>ថ្ងៃនេះ បុគ្គលិកទាំងអស់ ៧ នាក់ ធ្វើការ «វេនយប់» រួមគ្នា</span>`;
+            } else {
+                banner.className = "glass-card p-3 rounded-2xl border border-rose-500/40 text-center font-bold text-xs flex items-center justify-center gap-2 bg-rose-500/10 text-rose-700 dark:text-rose-300";
+                banner.innerHTML = `<i data-lucide="coffee" class="w-4 h-4 text-rose-500"></i> <span>ថ្ងៃនេះ បុគ្គលិកទាំងអស់ ៧ នាក់ «សម្រាក (Off)» រួមគ្នា</span>`;
+            }
+
+            document.getElementById('metric-morning').textContent = morningCount;
+            document.getElementById('metric-night').textContent = nightCount;
+            document.getElementById('metric-off').textContent = offCount;
+
+            const container = document.getElementById('staff-assignments-container');
+            container.innerHTML = '';
+
+            assignments.forEach(item => {
+                let badgeStyle = "";
+                let badgeLabel = "";
+
+                if (item.leaveType) {
+                    badgeStyle = "bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border-yellow-500/40 shadow-neon-amber";
+                    badgeLabel = item.leaveType === 'Sick' ? "🩺 ឈឺ" : (item.leaveType === 'Personal' ? "📝 ច្បាប់ផ្ទាល់ខ្លួន" : "🌴 ច្បាប់ប្រចាំឆ្នាំ");
+                } else if (item.shift === "ព្រឹក") {
+                    badgeStyle = "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40 shadow-neon-amber";
+                    badgeLabel = "🌅 វេនព្រឹក";
+                } else if (item.shift === "យប់") {
+                    badgeStyle = "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40 shadow-neon-blue";
+                    badgeLabel = "🌙 វេនយប់";
+                } else {
+                    badgeStyle = "bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/40";
+                    badgeLabel = "🔴 សម្រាក";
+                }
+
+                let lateBadge = item.lateReason ? `<div class="text-[10px] text-purple-600 dark:text-purple-400 font-bold mt-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> សុំយឺត៖ ${item.lateReason}</div>` : '';
+
+                const cardHtml = `
+                    <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 transition">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-800 dark:text-slate-100 text-sm tracking-wide">${item.staff.name}</span>
+                                ${item.staff.id === 3 ? '<span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">ADMIN</span>' : ''}
+                            </div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">💼 ${item.staff.role}</div>
+                            <div class="text-xs font-semibold text-cyan-600 dark:text-cyan-400 flex items-center gap-1 mt-1">
+                                <i data-lucide="monitor" class="w-3.5 h-3.5 text-cyan-500"></i>
+                                <span>តុ៖ <span class="text-slate-800 dark:text-slate-200 font-bold">${item.desk}</span></span>
+                            </div>
+                            ${lateBadge}
+                        </div>
+                        <div>
+                            <span class="px-3 py-1.5 text-xs font-bold rounded-xl border ${badgeStyle}">
+                                ${badgeLabel}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+
+            lucide.createIcons();
+            filterDailyCards();
+        }
+
+        function filterDailyCards() {
+            const query = document.getElementById('staff-search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('#staff-assignments-container > div');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function renderWeeklyMatrix() {
+            const table = document.getElementById('weekly-matrix-table');
+            table.innerHTML = '';
+
+            let headerRow = `<tr class="bg-slate-100 dark:bg-slate-900/90 text-slate-600 dark:text-slate-400 border-b border-slate-300 dark:border-slate-800">
+                <th class="p-2.5 font-bold">បុគ្គលិក</th>`;
+            
+            let tempDates = [];
+            for (let i = 0; i < 7; i++) {
+                let d = new Date(selectedDate);
+                d.setDate(d.getDate() + i);
+                tempDates.push(d);
+                const dayStr = d.toLocaleDateString('km-KH', { weekday: 'short' });
+                headerRow += `<th class="p-2 text-center font-bold">${dayStr}<br><span class="text-[9px] font-sans text-cyan-600 dark:text-cyan-400">${d.getDate()}</span></th>`;
+            }
+            headerRow += `</tr>`;
+            table.innerHTML += headerRow;
+
+            STAFF_MEMBERS.forEach(staff => {
+                let row = `<tr class="border-b border-slate-200 dark:border-slate-800/60 hover:bg-slate-100/50 dark:hover:bg-slate-900/40">
+                    <td class="p-2.5 font-bold text-slate-800 dark:text-slate-200">${staff.name.split(' ')[0]}</td>`;
+                
+                tempDates.forEach(d => {
+                    const { assignments } = calculateStaffAssignments(d);
+                    const staffAssign = assignments.find(a => a.staff.id === staff.id);
+                    
+                    let pillColor = "";
+                    let shortLabel = "";
+
+                    if (staffAssign.leaveType) {
+                        pillColor = "bg-yellow-500/30 text-yellow-800 dark:text-yellow-200 border-yellow-500/50";
+                        shortLabel = "ច្បាប់";
+                    } else if (staffAssign.shift === "ព្រឹក") {
+                        pillColor = "bg-amber-500/30 text-amber-800 dark:text-amber-200 border-amber-500/40";
+                        shortLabel = "ព្រឹក";
+                    } else if (staffAssign.shift === "យប់") {
+                        pillColor = "bg-blue-500/30 text-blue-800 dark:text-blue-200 border-blue-500/40";
+                        shortLabel = "យប់";
+                    } else {
+                        pillColor = "bg-rose-500/20 text-rose-700 dark:text-rose-400 border-rose-500/30";
+                        shortLabel = "សម្រាក";
+                    }
+
+                    row += `<td class="p-1.5 text-center">
+                        <span class="inline-block w-full py-1 text-[9px] font-bold rounded-lg border ${pillColor}">
+                            ${shortLabel}
+                        </span>
+                    </td>`;
+                });
+
+                row += `</tr>`;
+                table.innerHTML += row;
+            });
+        }
+
+        function populateAdminOptions() {
+            const leaveSelect = document.getElementById('leave-staff-select');
+            const lateSelect = document.getElementById('late-staff-select');
+            leaveSelect.innerHTML = '';
+            lateSelect.innerHTML = '';
+
+            STAFF_MEMBERS.forEach(s => {
+                leaveSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                lateSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+
+            const s1 = document.getElementById('swap-staff-1');
+            const s2 = document.getElementById('swap-staff-2');
+            s1.innerHTML = ''; s2.innerHTML = '';
+            STAFF_MEMBERS.forEach((s, idx) => {
+                s1.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                s2.innerHTML += `<option value="${s.id}" ${idx === 1 ? 'selected' : ''}>${s.name}</option>`;
+            });
+        }
+
+        async function sendTelegramGroupMessage(textMessage) {
+            if (TELEGRAM_BOT_TOKEN === "9136693389:AAH56iVMSPBAxmKcW0BOdmfZx7C7-rKD6xY" || TELEGRAM_CHAT_ID === "-1003942611436") {
+                alert("⚠️ សូមដាក់ Telegram Bot Token និង Chat ID ឱ្យបានត្រឹមត្រូវក្នុងកូដជាមុនសិន!");
+                return;
+            }
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: textMessage,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                const result = await response.json();
+                if (!result.ok) {
+                    alert("❌ Telegram API Error: " + result.description);
+                    console.error("Telegram API Error Details:", result);
+                } else {
+                    console.log("Message sent to Telegram successfully!");
+                }
+            } catch (e) {
+                console.error("Network Error:", e);
+                alert("❌ មានបញ្ហាបណ្តាញអ៊ិនធឺណិត (Network Error) ក្នុងការផ្ញើសារ!");
+            }
+        }
+
+        function applyLeaveForSelected() {
+            const staffId = parseInt(document.getElementById('leave-staff-select').value);
+            const staffObj = STAFF_MEMBERS.find(s => s.id === staffId);
+            const leaveType = document.getElementById('leave-type-select').value;
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const dateKhmer = getKhmerFormattedDate(selectedDate);
+
+            if (!staffLeaves[dateStr]) {
+                staffLeaves[dateStr] = {};
+            }
+
+            let leaveNameKhmer = leaveType === 'Sick' ? '🩺 ឈឺ (Sick Leave)' : (leaveType === 'Personal' ? '📝 ច្បាប់កិច្ចការផ្ទាល់ខ្លួន' : '🌴 ច្បាប់ប្រចាំឆ្នាំ');
+
+            if (staffLeaves[dateStr][staffId] === leaveType) {
+                delete staffLeaves[dateStr][staffId];
+                showToast("បានលុបការកំណត់ច្បាប់ចេញវិញ!");
+            } else {
+                staffLeaves[dateStr][staffId] = leaveType;
+                
+                let msg = `🚨 *ជូនដំណឹងសុំច្បាប់បុគ្គលិក*\n`;
+                msg += `📅 កាលបរិច្ឆេទ៖ ${dateKhmer}\n`;
+                msg += `👤 ឈ្មោះ៖ *${staffObj.name}* (${staffObj.role})\n`;
+                msg += `📋 ប្រភេទច្បាប់៖ *${leaveNameKhmer}*\n`;
+                msg += `-----------------------------------\n`;
+                msg += `📌 កត់ត្រាដោយ៖ Admin (LUN CHANDARA)`;
+                
+                sendTelegramGroupMessage(msg);
+                showToast("បានកត់ត្រា និងផ្ញើចូល Telegram Group ជោគជ័យ!");
+            }
+
+            localStorage.setItem('office_v6_leaves', JSON.stringify(staffLeaves));
+            renderUI();
+        }
+
+        function applyLateForSelected() {
+            const staffId = parseInt(document.getElementById('late-staff-select').value);
+            const staffObj = STAFF_MEMBERS.find(s => s.id === staffId);
+            const reason = document.getElementById('late-reason-input').value.trim() || "មកយឺត";
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const dateKhmer = getKhmerFormattedDate(selectedDate);
+
+            if (!staffLates[dateStr]) {
+                staffLates[dateStr] = {};
+            }
+
+            staffLates[dateStr][staffId] = reason;
+            localStorage.setItem('office_v6_lates', JSON.stringify(staffLates));
+
+            let msg = `⏰ *ជូនដំណឹងបុគ្គលិកសុំមកយឺត*\n`;
+            msg += `📅 កាលបរិច្ឆេទ៖ ${dateKhmer}\n`;
+            msg += `👤 ឈ្មោះ៖ *${staffObj.name}* (${staffObj.role})\n`;
+            msg += `⏱ មូលហេតុ/រយៈពេល៖ *${reason}*\n`;
+            msg += `-----------------------------------\n`;
+            msg += `📌 កត់ត្រាដោយ៖ Admin (LUN CHANDARA)`;
+
+            sendTelegramGroupMessage(msg);
+
+            document.getElementById('late-reason-input').value = '';
+            renderUI();
+            showToast("បានកត់ត្រា និងផ្ញើចូល Telegram Group ជោគជ័យ!");
+        }
+
+        function executeSwap() {
+            const id1 = parseInt(document.getElementById('swap-staff-1').value);
+            const id2 = parseInt(document.getElementById('swap-staff-2').value);
+
+            if (id1 === id2) {
+                showToast("សូមជ្រើសរើសបុគ្គលិក ២ នាក់ផ្សេងគ្នា!");
+                return;
+            }
+
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            if (!customSwaps[dateStr]) {
+                customSwaps[dateStr] = [];
+            }
+
+            customSwaps[dateStr].push({ staff1Id: id1, staff2Id: id2 });
+            localStorage.setItem('office_v6_swaps', JSON.stringify(customSwaps));
+
+            renderUI();
+            showToast("បានផ្លាស់ប្តូរតុជោគជ័យ!");
+        }
+
+        function updateCompanyLogo() {
+            const url = document.getElementById('admin-logo-url-input').value.trim();
+            if (url) {
+                customLogoUrl = url;
+                localStorage.setItem('office_v6_logo', customLogoUrl);
+                applyLogoUrl(customLogoUrl);
+                showToast("បានរក្សាទុក Link Logo ថ្មី!");
+            }
+        }
+
+        function applyLogoUrl(url) {
+            document.getElementById('company-logo-img').src = url;
+        }
+
+        function resetSettings() {
+            if (confirm("តើអ្នកពិតជាចង់ស្ដារការកំណត់កម្មវិធីទាំងអស់ទៅដើមវិញមែនទេ?")) {
+                localStorage.removeItem('office_v6_swaps');
+                localStorage.removeItem('office_v6_leaves');
+                localStorage.removeItem('office_v6_lates');
+                localStorage.removeItem('office_v6_logo');
+                location.reload();
+            }
+        }
+
+        function changeDate(days) {
+            selectedDate.setDate(selectedDate.getDate() + days);
+            document.getElementById('date-picker').valueAsDate = selectedDate;
+            renderUI();
+        }
+
+        function onDateSelected(val) {
+            if (val) {
+                selectedDate = new Date(val);
+                renderUI();
+            }
+        }
+
+        function resetToToday() {
+            selectedDate = new Date();
+            document.getElementById('date-picker').valueAsDate = selectedDate;
+            renderUI();
+        }
+
+        function generateSummaryMessage() {
+            const { assignments, globalGroupShift } = calculateStaffAssignments(selectedDate);
+            const dateKhmer = getKhmerFormattedDate(selectedDate);
+
+            let shiftLabel = globalGroupShift === "ព្រឹក" ? "🌅 វេនព្រឹក" : (globalGroupShift === "យប់" ? "🌙 វេនយប់" : "🔴 ថ្ងៃសម្រាក (Off)");
+
+            let msg = `🏢 *CAMBODIAN PPSHV EXPRESSWAY CO., LTD.*\n`;
+            msg += `📋 *តារាងបែងចែកតុ & វេនធ្វើការប្រចាំថ្ងៃ*\n`;
+            msg += `📅 ${dateKhmer}\n`;
+            msg += `🔄 *ស្ថានភាពវេនរួម:* ${shiftLabel}\n`;
+            msg += `-----------------------------------\n`;
+
+            assignments.forEach((item, index) => {
+                let shiftEmoji = item.shift === 'ព្រឹក' ? '🌅' : (item.shift === 'យប់' ? '🌙' : (item.leaveType ? '📝' : '🔴'));
+                let shiftName = item.leaveType ? (item.leaveType === 'Sick' ? 'សម្រាកព្យាបាល (ឈឺ)' : 'សុំច្បាប់') : item.shift;
+                let lateText = item.lateReason ? ` (សុំយឺត៖ ${item.lateReason})` : '';
+                msg += `${index + 1}. *${item.staff.name}* (${item.staff.role})${lateText}\n`;
+                msg += `   └ វេន: ${shiftEmoji} *${shiftName}* | តុ: *${item.desk}*\n`;
+            });
+
+            msg += `-----------------------------------\n`;
+            msg += `👉 ពិនិត្យតាមដានបន្ថែមក្នុង Telegram Mini App!`;
+            return msg;
+        }
+
+        function shareToTelegram() {
+            const msg = generateSummaryMessage();
+            if (TELEGRAM_BOT_TOKEN !== "9136693389:AAH56iVMSPBAxmKcW0BOdmfZx7C7-rKD6xY" && TELEGRAM_CHAT_ID !== "-1003942611436") {
+                sendTelegramGroupMessage(msg);
+            } else {
+                copySummaryText();
+            }
+        }
+
+        function copySummaryText() {
+            const msg = generateSummaryMessage();
+            const textarea = document.createElement('textarea');
+            textarea.value = msg;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast("បានចម្លងរបាយការណ៍ចូល Clipboard ជោគជ័យ!");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').textContent = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2600);
+        }
+    </script>
+</body>
+</html>
